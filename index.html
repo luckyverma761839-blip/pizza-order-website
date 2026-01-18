@@ -2,42 +2,90 @@
 <html>
 <head>
   <title>Pizza Order</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #fff3e0;
+    }
+    .card {
+      background: white;
+      width: 300px;
+      margin: auto;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+    }
+    img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    input, select, button {
+      width: 90%;
+      padding: 8px;
+      margin: 5px;
+    }
+    button {
+      background: green;
+      color: white;
+      border: none;
+      font-size: 16px;
+    }
+    h3 { color: #e65100; }
+  </style>
 </head>
+
 <body>
 
-  <h2>🍕 Pizza Order</h2>
+  <!-- 🔥 OWNER LOGO -->
+  <img src="file:///D:/y%2029/all%20photo/1000015750.jpg" style="width:120px;margin-top:10px;"><br>
 
-  <input type="text" id="name" placeholder="Your Name"><br><br>
-  <input type="text" id="pizza" placeholder="Pizza Name"><br><br>
-  <input type="number" id="qty" placeholder="Quantity"><br><br>
+  <h2>🍕 Lucky Pizza Shop</h2>
 
-  <button onclick="orderNow()">Order Now</button>
+  <div class="card">
+
+    <!-- 🍕 PIZZA IMAGE -->
+    <img src="https://4.imimg.com/data4/ND/MB/GLADMIN-%2033171042/chiz-pizza-500x500.jpg">
+
+    <h3>Cheese Pizza</h3>
+    <p>Price: ₹199</p>
+
+    <input type="text" id="name" placeholder="Your Name">
+
+    <input type="number" id="qty" placeholder="Quantity">
+
+    <p id="total">Total: ₹0</p>
+
+    <button onclick="orderNow()">Order on WhatsApp</button>
+  </div>
 
 <script>
 function orderNow() {
   var name = document.getElementById("name").value;
-  var pizza = document.getElementById("pizza").value;
   var qty = document.getElementById("qty").value;
+  var price = 199;
 
-  if (name === "" || pizza === "" || qty === "") {
+  if (name === "" || qty === "") {
     alert("Please fill all details");
     return;
   }
 
-  var phone = "919548104387"; // ✅ tera number OK hai
+  var total = price * qty;
+  document.getElementById("total").innerText = "Total: ₹" + total;
+
+  var phone = "919548104387"; // ✅ apna number
 
   var message =
     "🍕 New Pizza Order%0A" +
     "Name: " + name + "%0A" +
-    "Pizza: " + pizza + "%0A" +
-    "Quantity: " + qty;
+    "Pizza: Cheese Pizza%0A" +
+    "Quantity: " + qty + "%0A" +
+    "Total Price: ₹" + total;
 
   var url = "https://wa.me/" + phone + "?text=" + message;
-
-  window.open(url, "_blank"); // 🔥 YE LINE MISSING THI
+  window.open(url, "_blank");
 }
 </script>
-
 
 </body>
 </html>
