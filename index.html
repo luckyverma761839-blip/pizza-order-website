@@ -13,30 +13,31 @@
 
   <button onclick="orderNow()">Order Now</button>
 
-  <script>
-    function orderNow() {
-      var name = document.getElementById("name").value;
-      var pizza = document.getElementById("pizza").value;
-      var qty = document.getElementById("qty").value;
+<script>
+function orderNow() {
+  var name = document.getElementById("name").value;
+  var pizza = document.getElementById("pizza").value;
+  var qty = document.getElementById("qty").value;
 
-      if(name === "" || pizza === "" || qty === "") {
-        alert("Please fill all details");
-        return;
-      }
+  if (name === "" || pizza === "" || qty === "") {
+    alert("Please fill all details");
+    return;
+  }
 
-      var phone = "919548104387"; // 👈 YAHAN APNA NUMBER DAALE
+  var phone = "919548104387"; // ✅ tera number OK hai
 
-      var message =
-        "🍕 New Pizza Order%0A" +
-        "Name: " + name + "%0A" +
-        "Pizza: " + pizza + "%0A" +
-        "Quantity: " + qty;
+  var message =
+    "🍕 New Pizza Order%0A" +
+    "Name: " + name + "%0A" +
+    "Pizza: " + pizza + "%0A" +
+    "Quantity: " + qty;
 
-      var url = "https://wa.me/" + phone + "?text=" + message;
+  var url = "https://wa.me/" + phone + "?text=" + message;
 
-      window.open(url, "_blank");
-    }
-  </script>
+  window.open(url, "_blank"); // 🔥 YE LINE MISSING THI
+}
+</script>
+
 
 </body>
 </html>
