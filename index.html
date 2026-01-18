@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pizza Order</title>
+</head>
+<body>
+  <h2>🍕 Pizza Order</h2>
+
+  <input id="name" placeholder="Your Name"><br><br>
+  <input id="pizza" placeholder="Pizza Name"><br><br>
+  <input id="qty" type="number" placeholder="Quantity"><br><br>
+
+  <button onclick="order()">Order Now</button>
+
+  <p id="msg"></p>
+
+  <script>
+    function order() {
+      fetch("https://YOUR-BACKEND-LINK.glitch.me/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: document.getElementById("name").value,
+          pizza: document.getElementById("pizza").value,
+          quantity: document.getElementById("qty").value
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("msg").innerText = "✅ Order Placed Successfully";
+      });
+    }
+  </script>
+</body>
+</html>
