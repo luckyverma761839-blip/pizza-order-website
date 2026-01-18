@@ -4,32 +4,39 @@
   <title>Pizza Order</title>
 </head>
 <body>
+
   <h2>🍕 Pizza Order</h2>
 
-  <input id="name" placeholder="Your Name"><br><br>
-  <input id="pizza" placeholder="Pizza Name"><br><br>
-  <input id="qty" type="number" placeholder="Quantity"><br><br>
+  <input type="text" id="name" placeholder="Your Name"><br><br>
+  <input type="text" id="pizza" placeholder="Pizza Name"><br><br>
+  <input type="number" id="qty" placeholder="Quantity"><br><br>
 
-  <button onclick="order()">Order Now</button>
-
-  <p id="msg"></p>
+  <button onclick="orderNow()">Order Now</button>
 
   <script>
-    function order() {
-      fetch("https://YOUR-BACKEND-LINK.glitch.me/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: document.getElementById("name").value,
-          pizza: document.getElementById("pizza").value,
-          quantity: document.getElementById("qty").value
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("msg").innerText = "✅ Order Placed Successfully";
-      });
+    function orderNow() {
+      var name = document.getElementById("name").value;
+      var pizza = document.getElementById("pizza").value;
+      var qty = document.getElementById("qty").value;
+
+      if(name === "" || pizza === "" || qty === "") {
+        alert("Please fill all details");
+        return;
+      }
+
+      var phone = "9548104387"; // 👈 YAHAN APNA NUMBER DAALE
+
+      var message =
+        "🍕 New Pizza Order%0A" +
+        "Name: " + name + "%0A" +
+        "Pizza: " + pizza + "%0A" +
+        "Quantity: " + qty;
+
+      var url = "https://wa.me/" + phone + "?text=" + message;
+
+      window.open(url, "_blank");
     }
   </script>
+
 </body>
 </html>
