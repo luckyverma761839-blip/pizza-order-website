@@ -1,89 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pizza Order</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      background: #fff3e0;
-    }
-    .card {
-      background: white;
-      width: 300px;
-      margin: auto;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #aaa;
-    }
-    img {
-      width: 100%;
-      border-radius: 10px;
-    }
-    input, select, button {
-      width: 90%;
-      padding: 8px;
-      margin: 5px;
-    }
-    button {
-      background: green;
-      color: white;
-      border: none;
-      font-size: 16px;
-    }
-    h3 { color: #e65100; }
-  </style>
+<title>Lucky Food</title>
+<style>
+body{font-family:Arial;background:#f5f5f5;margin:0}
+.header{background:#e23744;color:white;padding:10px;display:flex;align-items:center}
+.header img{width:45px;border-radius:50%;margin-right:10px}
+.card{background:white;margin:10px;padding:10px;border-radius:10px;display:flex;align-items:center}
+.card img{width:90px;border-radius:10px}
+.info{flex:1;margin-left:10px}
+.add{background:#e23744;color:white;border:none;padding:6px 10px;border-radius:5px}
+.cart-bar{position:fixed;bottom:0;width:100%;background:#2e7d32;color:white;
+padding:12px;text-align:center;font-size:16px;display:none}
+</style>
 </head>
 
 <body>
 
-  <!-- 🔥 OWNER LOGO -->
-  <img src="file:///D:/y%2029/all%20photo/1000015750.jpg" style="width:120px;margin-top:10px;"><br>
+<div class="header">
+<img src="file:///D:/y%2029/all%20photo/1000015750.jpg">
+<h3>Lucky Food</h3>
+</div>
 
-  <h2>🍕 Lucky Pizza Shop</h2>
+<div class="card">
+<img src="https://4.imimg.com/data4/ND/MB/GLADMIN-%2033171042/chiz-pizza-500x500.jpg">
+<div class="info"><b>Cheese Pizza</b><br>₹199</div>
+<button class="add" onclick="add('Cheese Pizza',199)">ADD</button>
+</div>
 
-  <div class="card">
+<div class="card">
+<img src="https://bing.com/th?id=OSK.c4ef4d50c750dbb27f7fcc964db47283">
+<div class="info"><b>Paneer Pizza</b><br>₹249</div>
+<button class="add" onclick="add('Paneer Pizza',249)">ADD</button>
+</div>
 
-    <!-- 🍕 PIZZA IMAGE -->
-    <img src="https://4.imimg.com/data4/ND/MB/GLADMIN-%2033171042/chiz-pizza-500x500.jpg">
+<div class="card">
+<img src="https://tse3.mm.bing.net/th/id/OIP.63DXNvmrWY7ro959UIXcXgHaLH?rs=1&pid=ImgDetMain&o=7&rm=3">
+<div class="info"><b>Veg Burger</b><br>₹99</div>
+<button class="add" onclick="add('Veg Burger',99)">ADD</button>
+</div>
 
-    <h3>Cheese Pizza</h3>
-    <p>Price: ₹199</p>
-
-    <input type="text" id="name" placeholder="Your Name">
-
-    <input type="number" id="qty" placeholder="Quantity">
-
-    <p id="total">Total: ₹0</p>
-
-    <button onclick="orderNow()">Order on WhatsApp</button>
-  </div>
+<div class="cart-bar" id="cart" onclick="goCheckout()">
+🛒 <span id="count">0</span> items | ₹<span id="total">0</span> → CHECKOUT
+</div>
 
 <script>
-function orderNow() {
-  var name = document.getElementById("name").value;
-  var qty = document.getElementById("qty").value;
-  var price = 199;
+let cart=[], total=0;
 
-  if (name === "" || qty === "") {
-    alert("Please fill all details");
-    return;
-  }
+function add(name,price){
+  cart.push(name+" ₹"+price);
+  total+=price;
+  localStorage.setItem("cart",JSON.stringify(cart));
+  localStorage.setItem("total",total);
+  document.getElementById("count").innerText=cart.length;
+  document.getElementById("total").innerText=total;
+  document.getElementById("cart").style.display="block";
+}
 
-  var total = price * qty;
-  document.getElementById("total").innerText = "Total: ₹" + total;
-
-  var phone = "919548104387"; // ✅ apna number
-
-  var message =
-    "🍕 New Pizza Order%0A" +
-    "Name: " + name + "%0A" +
-    "Pizza: Cheese Pizza%0A" +
-    "Quantity: " + qty + "%0A" +
-    "Total Price: ₹" + total;
-
-  var url = "https://wa.me/" + phone + "?text=" + message;
-  window.open(url, "_blank");
+function goCheckout(){
+  window.location="checkout.html";
 }
 </script>
 
