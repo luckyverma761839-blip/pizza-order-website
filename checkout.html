@@ -3,11 +3,39 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout</title>
+
 <style>
-body{font-family:Arial;background:#fff3e0;text-align:center}
-.card{background:#fff;width:320px;margin:auto;padding:15px;border-radius:12px}
-input,button{width:90%;padding:8px;margin:6px}
-button{background:#e23744;color:#fff;border:none}
+body{
+ font-family:Arial;
+ background:#fff3e0;
+ text-align:center;
+ margin:0;
+}
+.card{
+ background:#fff;
+ width:90%;
+ max-width:340px;
+ margin:20px auto;
+ padding:15px;
+ border-radius:14px;
+ box-shadow:0 0 10px #ccc;
+}
+input,button{
+ width:95%;
+ padding:10px;
+ margin:6px 0;
+ font-size:15px;
+}
+button{
+ background:#e23744;
+ color:#fff;
+ border:none;
+ border-radius:6px;
+}
+#loc{
+ font-size:14px;
+ color:green;
+}
 </style>
 </head>
 
@@ -16,57 +44,94 @@ button{background:#e23744;color:#fff;border:none}
 <h2>📍 Delivery Details</h2>
 
 <div class="card">
-<input id="name" placeholder="Name">
-<input id="mobile" placeholder="Mobile">
+<input id="name" placeholder="Your Name">
+<input id="mobile" placeholder="Mobile Number">
 <input id="address" placeholder="Full Address">
 
-<p id="loc">Location not shared</p>
-<button onclick="getLoc()">Share Live Location</button><br><br>
-<button onclick="order()">Place Order</button>
+<p id="loc">❌ Location not shared</p>
+<button onclick="getLoc()">📍 Share Live Location</button><br><br>
+<button onclick="order()">✅ Place Order</button>
 </div>
 
 <script>
-let lat="",lon="";
+let lat="", lon="";
 
 function getLoc(){
-navigator.geolocation.getCurrentPosition(p=>{
- lat=p.coords.latitude;
- lon=p.coords.longitude;
- document.getElementById("loc").innerText="📍 Location shared";
-});
+ if(!navigator.geolocation){
+   alert("Location not supported");
+   return;
+ }
+
+ navigator.geolocation.getCurrentPosition(
+  p=>{
+   lat=p.coords.latitude;
+   lon=p.coords.longitude;
+   document.getElementById("loc").innerText="✅ Location shared";
+  },
+  ()=>{
+   alert("Location allow karo bhai 😅");
+  }
+ );
 }
 
 function order(){
- let cart=JSON.parse(localStorage.getItem("cart"));
- let total=localStorage.getItem("total");
 
- let orderTxt="";
- for(let i in cart){
-  if(cart[i]>0) orderTxt+=`${i} x ${cart[i]}, `;
+ let nameVal=document.getElementById("name").value;
+ let mobileVal=document.getElementById("mobile").value;
+ let addressVal=document.getElementById("address").value;
+
+ if(nameVal==""||mobileVal==""||addressVal==""){
+  alert("Sab details bharo");
+  return;
  }
 
- let msg=`🍽 Lucky Food Order
-Name: ${name.value}
-Mobile: ${mobile.value}
-Address: ${address.value}
+ if(lat==""||lon==""){
+  alert("Pehle location share karo");
+  return;
+ }
+
+ let cart=JSON.parse(localStorage.getItem("cart")) || {};
+ let total=localStorage.getItem("total") || 0;
+
+ let orderArr=[];
+ for(let item in cart){
+  if(cart[item]>0){
+   orderArr.push(`${item} x ${cart[item]}`);
+  }
+ }
+
+ let orderTxt=orderArr.join(", ");
+
+ let mapLink=`https://maps.google.com/?q=${lat},${lon}`;
+
+ let msg=
+`🍽 Lucky Food Order
+Name: ${nameVal}
+Mobile: ${mobileVal}
+Address: ${addressVal}
 Order: ${orderTxt}
 Total: ₹${total}
-Map: https://maps.google.com/?q=${lat},${lon}`;
+Map: ${mapLink}`;
 
- window.open("https://wa.me/919548104387?text="+encodeURIComponent(msg));
+ window.open(
+  "https://wa.me/919548104387?text="+encodeURIComponent(msg),
+  "_blank"
+ );
 
  /* GOOGLE SHEET */
  fetch("YOUR_GOOGLE_FORM_POST_URL",{
-  method:"POST",mode:"no-cors",
+  method:"POST",
+  mode:"no-cors",
   body:new URLSearchParams({
-   "entry.NAME_ID":name.value,
-   "entry.MOBILE_ID":mobile.value,
-   "entry.ADDRESS_ID":address.value,
+   "entry.NAME_ID":nameVal,
+   "entry.MOBILE_ID":mobileVal,
+   "entry.ADDRESS_ID":addressVal,
    "entry.ORDER_ID":orderTxt,
    "entry.TOTAL_ID":total,
    "entry.LOCATION_ID":lat+","+lon
   })
  });
+
 }
 </script>
 
