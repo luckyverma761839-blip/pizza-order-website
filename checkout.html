@@ -1,50 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Delivery Details</title>
+<title>Checkout</title>
 
 <style>
 body{
-  margin:0;
-  font-family:Arial;
-  background:#fff3e0;
-  text-align:center;
+ font-family:Arial;
+ background:#fff3e0;
+ text-align:center;
 }
-
-h2{
-  margin-top:15px;
-}
-
 .card{
-  background:#fff;
-  width:90%;
-  max-width:360px;
-  margin:20px auto;
-  padding:16px;
-  border-radius:14px;
-  box-shadow:0 0 10px #ccc;
+ background:#fff;
+ width:320px;
+ margin:auto;
+ padding:15px;
+ border-radius:12px;
 }
-
-input{
-  width:95%;
-  padding:12px;
-  margin:8px 0;
-  font-size:15px;
-  border-radius:6px;
-  border:1px solid #ccc;
+input,button{
+ width:90%;
+ padding:10px;
+ margin:6px;
+ font-size:16px;
 }
-
 button{
-  width:95%;
-  padding:12px;
-  margin-top:12px;
-  font-size:16px;
-  background:#e23744;
-  color:white;
-  border:none;
-  border-radius:8px;
+ background:#e23744;
+ color:white;
+ border:none;
+ border-radius:8px;
+}
+#loc{
+ font-size:14px;
+ color:green;
 }
 </style>
 </head>
@@ -54,82 +41,100 @@ button{
 <h2>📍 Delivery Details</h2>
 
 <div class="card">
-  <input id="name" placeholder="Your Name">
-  <input id="mobile" placeholder="Mobile Number">
-  <input id="address" placeholder="Full Address">
+<input id="custName" placeholder="Name" required>
+<input id="mobile" placeholder="Mobile" required>
+<input id="address" placeholder="Full Address" required>
 
-  <button onclick="placeOrder()">✅ Place Order</button>
+<p id="loc">❌ Location not shared</p>
+<button onclick="getLoc()">📍 Share Live Location</button><br><br>
+
+<button onclick="placeOrder()">✅ Place Order</button>
 </div>
 
 <script>
+let lat = "";
+let lon = "";
+
+/* LOCATION */
+function getLoc(){
+ if(!navigator.geolocation){
+  alert("Location not supported");
+  return;
+ }
+
+ navigator.geolocation.getCurrentPosition(
+  pos=>{
+   lat = pos.coords.latitude;
+   lon = pos.coords.longitude;
+   document.getElementById("loc").innerText =
+    "✅ Location shared";
+  },
+  err=>{
+   alert("Location allow karo");
+  }
+ );
+}
+
+/* ORDER */
 function placeOrder(){
 
-  let nameVal=document.getElementById("name").value;
-  let mobileVal=document.getElementById("mobile").value;
-  let addressVal=document.getElementById("address").value;
+ if(lat=="" || lon==""){
+  alert("Pehle location share karo");
+  return;
+ }
 
-  if(nameVal=="" || mobileVal=="" || addressVal==""){
-    alert("Sab details bharo");
-    return;
+ let name = document.getElementById("custName").value;
+ let mobile = document.getElementById("mobile").value;
+ let address = document.getElementById("address").value;
+
+ if(name=="" || mobile=="" || address==""){
+  alert("Sab fields bharo");
+  return;
+ }
+
+ let cart = JSON.parse(localStorage.getItem("cart")) || {};
+ let total = localStorage.getItem("total") || 0;
+
+ let orderTxt = "";
+ for(let item in cart){
+  if(cart[item]>0){
+   orderTxt += `${item} x ${cart[item]}, `;
   }
+ }
 
-  if(!navigator.geolocation){
-    alert("Location supported nahi");
-    return;
-  }
+ let mapLink = `https://maps.google.com/?q=${lat},${lon}`;
 
-  navigator.geolocation.getCurrentPosition(
-    (pos)=>{
-
-      let lat=pos.coords.latitude;
-      let lon=pos.coords.longitude;
-
-      let cart=JSON.parse(localStorage.getItem("cart")) || {};
-      let total=localStorage.getItem("total") || 0;
-
-      let orderArr=[];
-      for(let item in cart){
-        if(cart[item]>0){
-          orderArr.push(`${item} x ${cart[item]}`);
-        }
-      }
-
-      let orderTxt=orderArr.join(", ");
-      let mapLink=`https://maps.google.com/?q=${lat},${lon}`;
-
-      let message=
+ /* WHATSAPP */
+ let msg =
 `🍽 Lucky Food Order
-Name: ${nameVal}
-Mobile: ${mobileVal}
-Address: ${addressVal}
+Name: ${name}
+Mobile: ${mobile}
+Address: ${address}
 Order: ${orderTxt}
 Total: ₹${total}
 Map: ${mapLink}`;
 
-      window.open(
-        "https://wa.me/919548104387?text="+encodeURIComponent(message),
-        "_blank"
-      );
+ window.open(
+  "https://wa.me/919548104387?text=" +
+  encodeURIComponent(msg)
+ );
 
-      /* GOOGLE SHEETS (OPTIONAL) */
-      fetch("YOUR_GOOGLE_FORM_POST_URL",{
-        method:"POST",
-        mode:"no-cors",
-        body:new URLSearchParams({
-          "entry.NAME_ID":nameVal,
-          "entry.MOBILE_ID":mobileVal,
-          "entry.ADDRESS_ID":addressVal,
-          "entry.ORDER_ID":orderTxt,
-          "entry.TOTAL_ID":total,
-          "entry.LOCATION_ID":lat+","+lon
-        })
-      });
+ /* GOOGLE FORM → SHEET */
+ fetch(
+ "https://docs.google.com/forms/d/e/1FAIpQLSedR_Ae58hNDBIL_GoxyiugBy1UDNC7egNB7ZLGy9Jl-qIFWg/formResponse",
+ {
+  method:"POST",
+  mode:"no-cors",
+  body:new URLSearchParams({
+   "entry.305816801": name,
+   "entry.939920568": mobile,
+   "entry.1721748407": address,
+   "entry.1630372635": orderTxt,
+   "entry.912633813": total,
+   "entry.515021196": lat + "," + lon
+  })
+ });
 
-    },
-    ()=>{
-      alert("Location allow karo bhai 😅");
-    }
-  );
 }
 </script>
 
