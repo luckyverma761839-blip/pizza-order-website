@@ -1,129 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lucky Food</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-  .card{
-  background:white;
-  margin:10px;
-  padding:10px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+body{margin:0;font-family:Arial;background:#f2f2f2}
+.header{background:#e23744;color:#fff;padding:14px;display:flex;align-items:center}
+.logo{width:42px;height:42px;border-radius:50%;object-fit:cover;margin-right:10px}
+.card{
+ background:#fff;margin:12px;padding:12px;border-radius:14px;
+ display:flex;align-items:center;
+ box-shadow:0 4px 10px rgba(0,0,0,.08)
 }
-.card img{
-  width:80px;
-  height:80px;
-  border-radius:10px;
-  object-fit:cover;
-}
-.add{
-  padding:6px 12px;
-  font-size:14px;
-}
-.cart-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  box-sizing:border-box;
-  background:#2e7d32;
-  color:white;
-  padding:14px;
-  font-size:16px;
-}
-  .header{
-  background:#e23744;
-  color:white;
-  padding:12px;
-  display:flex;
-  align-items:center;
-}
-.logo{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  object-fit:cover;
-  margin-right:10px;
-}
-.title{
-  font-size:18px;
-  font-weight:bold;
-}
-.subtitle{
-  font-size:12px;
-  opacity:0.9;
-}
-
-
-body{font-family:Arial;background:#f5f5f5;margin:0}
-.header{background:#e23744;color:white;padding:10px;display:flex;align-items:center}
-.header img{width:45px;border-radius:50%;margin-right:10px}
-.card{background:white;margin:10px;padding:10px;border-radius:10px;display:flex;align-items:center}
-.card img{width:90px;border-radius:10px}
+.card img{width:90px;height:90px;border-radius:12px;object-fit:cover}
 .info{flex:1;margin-left:10px}
-.add{background:#e23744;color:white;border:none;padding:6px 10px;border-radius:5px}
-.cart-bar{position:fixed;bottom:0;width:100%;background:#2e7d32;color:white;
-padding:12px;text-align:center;font-size:16px;display:none}
+.qty{display:flex;border:1px solid #e23744;border-radius:6px;overflow:hidden}
+.qty button{background:#e23744;color:#fff;border:none;width:28px;height:28px;font-size:18px}
+.qty span{width:28px;text-align:center}
+.cart-bar{
+ position:fixed;bottom:0;left:0;width:100%;
+ background:#1c7c3e;color:#fff;
+ padding:14px;font-size:15px;
+ transform:translateY(100%);transition:.3s
+}
+.cart-bar.show{transform:translateY(0)}
 </style>
 </head>
 
 <body>
-  <div class="header">
-  <img src="logo.jpg" class="logo">
-  <div>
-    <div class="title">Lucky Food</div>
-    <div class="subtitle">Fast Delivery</div>
-  </div>
+
+<div class="header">
+<img src="1000015750.jpg" class="logo">
+<b>Lucky Food</b>
 </div>
 
-
-<!-- <div class="header">
-<img src="file:///D:/y%2029/all%20photo/1000015750.jpg">
-<h3>Lucky Food</h3>
-</div> -->
-
+<!-- ITEM -->
 <div class="card">
-<img src="https://4.imimg.com/data4/ND/MB/GLADMIN-%2033171042/chiz-pizza-500x500.jpg">
+<img src="https://i.imgur.com/lz7Z2fS.jpg">
 <div class="info"><b>Cheese Pizza</b><br>₹199</div>
-<button class="add" onclick="add('Cheese Pizza',199)">ADD</button>
+<div class="qty">
+<button onclick="chg('Cheese Pizza',199,-1)">−</button>
+<span id="Cheese Pizza">0</span>
+<button onclick="chg('Cheese Pizza',199,1)">+</button>
+</div>
 </div>
 
 <div class="card">
-<img src="https://bing.com/th?id=OSK.c4ef4d50c750dbb27f7fcc964db47283">
+<img src="https://i.imgur.com/JUu9KQm.jpg">
 <div class="info"><b>Paneer Pizza</b><br>₹249</div>
-<button class="add" onclick="add('Paneer Pizza',249)">ADD</button>
+<div class="qty">
+<button onclick="chg('Paneer Pizza',249,-1)">−</button>
+<span id="Paneer Pizza">0</span>
+<button onclick="chg('Paneer Pizza',249,1)">+</button>
+</div>
 </div>
 
 <div class="card">
-<img src="https://tse3.mm.bing.net/th/id/OIP.63DXNvmrWY7ro959UIXcXgHaLH?rs=1&pid=ImgDetMain&o=7&rm=3">
+<img src="https://i.imgur.com/FU1Ffpr.jpg">
 <div class="info"><b>Veg Burger</b><br>₹99</div>
-<button class="add" onclick="add('Veg Burger',99)">ADD</button>
+<div class="qty">
+<button onclick="chg('Veg Burger',99,-1)">−</button>
+<span id="Veg Burger">0</span>
+<button onclick="chg('Veg Burger',99,1)">+</button>
+</div>
 </div>
 
-<div class="cart-bar" id="cart" onclick="goCheckout()">
-🛒 <span id="count">0</span> items | ₹<span id="total">0</span> → CHECKOUT
+<div class="cart-bar" id="cart" onclick="go()">
+🛒 <span id="items">0</span> items | ₹<span id="total">0</span> → CHECKOUT
 </div>
 
 <script>
-let cart=[], total=0;
+let cart={},items=0,total=0;
 
-function add(name,price){
-  cart.push(name+" ₹"+price);
-  total+=price;
-  localStorage.setItem("cart",JSON.stringify(cart));
-  localStorage.setItem("total",total);
-  document.getElementById("count").innerText=cart.length;
-  document.getElementById("total").innerText=total;
-  document.getElementById("cart").style.display="block";
+function chg(name,price,d){
+ cart[name]=(cart[name]||0)+d;
+ if(cart[name]<0) cart[name]=0;
+ document.getElementById(name).innerText=cart[name];
+
+ items=0; total=0;
+ for(let i in cart){
+   items+=cart[i];
+   total+=cart[i]*price;
+ }
+
+ localStorage.setItem("cart",JSON.stringify(cart));
+ localStorage.setItem("total",total);
+
+ document.getElementById("items").innerText=items;
+ document.getElementById("total").innerText=total;
+ document.getElementById("cart").classList.toggle("show",items>0);
 }
 
-function goCheckout(){
-  window.location="checkout.html";
-}
+function go(){ location="checkout.html"; }
 </script>
 
 </body>
