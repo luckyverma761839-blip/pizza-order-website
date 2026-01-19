@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout</title>
 <style>
 body{font-family:Arial;background:#fff3e0;text-align:center}
-.card{background:white;width:320px;margin:auto;padding:15px;border-radius:10px}
-input,button{width:90%;padding:8px;margin:5px}
-button{background:#e23744;color:white;border:none}
+.card{background:#fff;width:320px;margin:auto;padding:15px;border-radius:12px}
+input,button{width:90%;padding:8px;margin:6px}
+button{background:#e23744;color:#fff;border:none}
 </style>
 </head>
 
@@ -15,63 +16,58 @@ button{background:#e23744;color:white;border:none}
 <h2>📍 Delivery Details</h2>
 
 <div class="card">
-<input id="name" placeholder="Your Name">
-<input id="mobile" placeholder="Mobile Number">
+<input id="name" placeholder="Name">
+<input id="mobile" placeholder="Mobile">
 <input id="address" placeholder="Full Address">
 
 <p id="loc">Location not shared</p>
-<button onclick="getLocation()">Share Live Location</button><br><br>
-
-<button onclick="placeOrder()">Place Order</button>
+<button onclick="getLoc()">Share Live Location</button><br><br>
+<button onclick="order()">Place Order</button>
 </div>
 
 <script>
 let lat="",lon="";
 
-function getLocation(){
-navigator.geolocation.getCurrentPosition(pos=>{
- lat=pos.coords.latitude;
- lon=pos.coords.longitude;
+function getLoc(){
+navigator.geolocation.getCurrentPosition(p=>{
+ lat=p.coords.latitude;
+ lon=p.coords.longitude;
  document.getElementById("loc").innerText="📍 Location shared";
 });
 }
 
-function placeOrder(){
-let name=nameEl.value;
-let mobile=mobileEl.value;
-let address=addressEl.value;
-let cart=JSON.parse(localStorage.getItem("cart"));
-let total=localStorage.getItem("total");
+function order(){
+ let cart=JSON.parse(localStorage.getItem("cart"));
+ let total=localStorage.getItem("total");
 
-let msg=`🍽 Lucky Food Order
-Name: ${name}
-Mobile: ${mobile}
-Address: ${address}
-Order: ${cart.join(", ")}
+ let orderTxt="";
+ for(let i in cart){
+  if(cart[i]>0) orderTxt+=`${i} x ${cart[i]}, `;
+ }
+
+ let msg=`🍽 Lucky Food Order
+Name: ${name.value}
+Mobile: ${mobile.value}
+Address: ${address.value}
+Order: ${orderTxt}
 Total: ₹${total}
 Map: https://maps.google.com/?q=${lat},${lon}`;
 
-window.open("https://wa.me/919548104387?text="+encodeURIComponent(msg));
+ window.open("https://wa.me/919548104387?text="+encodeURIComponent(msg));
 
-/* GOOGLE SHEET */
-fetch("YOUR_GOOGLE_FORM_POST_URL",{
- method:"POST",
- mode:"no-cors",
- body:new URLSearchParams({
-  "entry.NAME_ID":name,
-  "entry.MOBILE_ID":mobile,
-  "entry.ADDRESS_ID":address,
-  "entry.ORDER_ID":cart.join(", "),
-  "entry.TOTAL_ID":total,
-  "entry.LAT_ID":lat,
-  "entry.LON_ID":lon
- })
-});
+ /* GOOGLE SHEET */
+ fetch("YOUR_GOOGLE_FORM_POST_URL",{
+  method:"POST",mode:"no-cors",
+  body:new URLSearchParams({
+   "entry.NAME_ID":name.value,
+   "entry.MOBILE_ID":mobile.value,
+   "entry.ADDRESS_ID":address.value,
+   "entry.ORDER_ID":orderTxt,
+   "entry.TOTAL_ID":total,
+   "entry.LOCATION_ID":lat+","+lon
+  })
+ });
 }
-
-let nameEl=document.getElementById("name");
-let mobileEl=document.getElementById("mobile");
-let addressEl=document.getElementById("address");
 </script>
 
 </body>
